@@ -1,0 +1,58 @@
+/* 通用設定 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 卡片樣式 */
+.card {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 300px;
+}
+
+/* 頭像 */
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+/* 名稱 */
+.card h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* 簡介文字 */
+.card p {
+  color: #666;
+  margin: 0.5rem 0 1.5rem;
+}
+
+/* 連結按鈕 */
+.links a {
+  text-decoration: none;
+  color: white;
+  background-color: #0077cc;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  margin: 0 0.5rem;
+  display: inline-block;
+  transition: background-color 0.3s;
+}
+
+.links a:hover {
+  background-color: #005fa3;
+}

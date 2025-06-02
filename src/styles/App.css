@@ -1,0 +1,691 @@
+:root {
+    --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --background-main: #1a1d24; /* Slightly lighter dark blue/grey */
+    --background-card: #252a33; /* Darker card background */
+    --text-primary: #e5e5e5;    /* Light grey for primary text */
+    --text-secondary: #a0a0a0; /* Medium grey for secondary text */
+    --accent-primary: #3498db;  /* Existing blue, can be changed */
+    --accent-secondary: #8e44ad; /* A muted purple */
+    --accent-gold: #e6c300; /* A less bright gold */
+    --color-success: #2ecc71;   /* Green for positive changes */
+    --color-danger: #e74c3c;    /* Red for negative changes */
+    --border-color: #3f444e;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --card-border-radius: 12px; /* Standardized card border radius */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family-primary);
+}
+
+body {
+    background-color: var(--background-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.header {
+    background-color: var(--background-card); /* Use card background for consistency */
+    color: var(--text-primary);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 5px solid var(--accent-primary);
+}
+
+.header-title {
+    font-size: 28px; /* Increased size */
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--accent-gold);
+}
+
+.header-date {
+    font-size: 16px; /* Increased size */
+    opacity: 0.8;
+    color: var(--text-secondary);
+}
+
+.main-content {
+    max-width: 1300px; /* Slightly wider */
+    margin: 0 auto;
+    padding: 25px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 25px; /* Increased gap */
+}
+
+.chart-container {
+    flex: 3;
+    margin-right: 25px; /* Increased gap */
+    width: 100%;
+    min-height: 250px;
+    position: relative;
+}
+
+.row > .chart-container:last-child {
+    margin-right: 0;
+}
+
+/* .chart-container > div { */
+    /* This rule was very generic: position: absolute !important; top:0; left:0; right:0; bottom:0; */
+    /* It might be too aggressive. Let's comment out and see. Card children should behave well. */
+    /* If specific children of chart-container need this, target them directly */
+/* } */
+
+.metrics-column {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Increased gap */
+}
+
+/* New Columns for the top row layout */
+.left-chart-stack-column {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Standardized gap */
+    margin-right: 20px;
+    min-height: 800px; /* Ensure minimum height for the column */
+}
+
+.right-info-column {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Standardized gap */
+}
+
+/* Styles for the daily chart wrapper to ensure its card child fills height */
+.daily-chart-wrapper {
+    display: flex; /* Use flex to make its child fill height */
+    flex-direction: column;
+    flex: 3; /* Ensure it takes up the space allocated by its parent row, matching StockDetail.tsx */
+}
+
+.daily-chart-wrapper > .card {
+    flex: 1; /* Make the card fill the wrapper */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Explicitly set height to 100% of the parent */
+}
+
+/* Styles for the price chart wrapper to ensure its card child fills height */
+.price-chart-wrapper {
+    display: flex; /* Use flex to make its child fill height */
+    flex-direction: column;
+    flex: 2; /* Takes more space as defined in StockDetail.tsx, matching .right-info-column */
+}
+
+.price-chart-wrapper > .card {
+    flex: 1; /* Make the card fill the wrapper */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Explicitly set height to 100% of the parent */
+}
+
+/* Styles for the News Row and its columns */
+.news-row {
+    /* alignItems: 'stretch' is handled by sx prop */
+    /* No gap here, using margin on child for consistency with .left-chart-stack-column */
+}
+
+.news-column {
+    display: flex; /* Ensured by sx prop */
+    flex-direction: column; /* Ensure card within can stretch if needed */
+    padding: 0; /* Remove any potential padding that could affect width */
+}
+
+.news-column > .card {
+    margin-bottom: 0 !important; /* Override default card margin-bottom for this specific row */
+    width: 100%; /* Ensure card takes full width of its column container */
+    flex: 1; /* Ensure card takes full height of its column container */
+}
+
+/* Chart height controls */
+.chart-large {
+    flex: 1;  /* Changed from flex: 10 to flex: 1 for equal distribution */
+    min-height: 300px;  /* Changed from fixed height to min-height */
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-small {
+    flex: 1;   /* Changed from flex: 5 to flex: 1 */
+    min-height: 200px;  /* Added min-height instead of height: auto */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure all chart containers properly fill their space */
+.chart-large > .card, 
+.chart-small > .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent overflow */
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Important for flex child to shrink properly */
+    position: relative;
+}
+
+/* Ensure Plotly charts fill their containers */
+.plotly-chart-container {
+    flex: 1;
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.plotly-chart-container > div {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Remove fixed heights from cards that should be flexible */
+.right-info-column .card-content {
+    flex: 1;
+    min-height: 0;
+}
+
+.full-width {
+    flex: 1 1 100%;
+    background-color: var(--background-card);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 20px; /* Standardized padding */
+}
+
+.card {
+    background-color: var(--background-card);
+    border-radius: var(--card-border-radius); /* Updated to use variable */
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
+    height: auto; /* Retain auto height unless specific context needs 100% */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.card-title {
+    color: var(--accent-gold); /* Use new gold color */
+    font-size: 20px; /* Slightly increased */
+    margin-bottom: 15px;
+    font-weight: 600; /* Adjusted weight */
+    border-bottom: 2px solid var(--accent-primary);
+    padding-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    margin: 15px 0 10px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* More responsive */
+    gap: 15px;
+}
+
+.metric-container {
+    padding: 12px;
+    border-radius: 8px; /* Slightly more rounded */
+    background-color: #2c3038; /* Slightly different from card for depth */
+    border: 1px solid var(--border-color);
+}
+
+.metric-title {
+    font-size: 13px; /* Adjusted size */
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Metric container background colors - Using CSS variables for potential theming */
+.metric-container.metric-bg-0 { background-color: hsl(340, 40%, 45%) !important; } /* Muted Red/Rose */
+.metric-container.metric-bg-1 { background-color: hsl(260, 40%, 50%) !important; } /* Muted Purple/Indigo */
+.metric-container.metric-bg-2 { background-color: hsl(30,  45%, 50%) !important; } /* Muted Orange/Brown */
+.metric-container.metric-bg-3 { background-color: hsl(60,  40%, 45%) !important; } /* Muted Yellow/Olive */
+.metric-container.metric-bg-4 { background-color: hsl(140, 35%, 45%) !important; } /* Muted Green */
+.metric-container.metric-bg-5 { background-color: hsl(200, 40%, 45%) !important; } /* Muted Blue/Steel */
+
+/* Ensure text in colored metric containers is readable */
+.metric-container[class*="metric-bg-"] .metric-title,
+.metric-container[class*="metric-bg-"] .metric-value {
+    color: var(--text-primary) !important; /* Override with light text for colored backgrounds */
+}
+
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Increased gap */
+}
+
+.info-item {
+    display: grid;
+    grid-template-columns: 130px 1fr; /* Adjusted column width */
+    align-items: center;
+    gap: 10px;
+}
+
+.info-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.info-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.reasons-list {
+    margin-left: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.reasons-list li {
+    margin-bottom: 6px;
+}
+
+.suggestion-container {
+    background-color: var(--background-card); /* Use consistent card background */
+    padding: 15px;
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.suggestion-text p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.footer {
+    background-color: var(--background-card); /* Use consistent card background */
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 20px; /* Increased padding */
+    margin-top: 30px; /* Increased margin */
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-text {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.stock-list {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); */
+    /* This will be controlled by MUI Grid in StockList.tsx, keep CSS generic */
+    gap: 20px;
+    margin-top: 20px;
+    /* padding: 20px; */ /* Padding is on main-content now */
+}
+
+/* Specific styling for stock cards from StockCard.tsx */
+/* This will be applied via sx prop if needed, or StockCard.tsx can import this class */
+/* For now, .card styling will apply generally. If more specific needed, we can add .stock-card-specific */
+
+.stock-card {
+    /* Generic card styles will apply from .card. Add specific overrides if needed. */
+    /* background-color: #1e1e1e; */ /* Already set by var(--background-card) in .card */
+    /* border-radius: 8px; */ /* Will use var(--card-border-radius) */
+    /* box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05); */ /* Will use var(--card-shadow) */
+    /* padding: 15px; */ /* Will use .card padding */
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition */
+}
+
+.stock-card:hover {
+    transform: translateY(-6px); /* Slightly more lift */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+.stock-symbol {
+    font-size: 22px; /* Larger symbol */
+    font-weight: 700; /* Bolder */
+    color: var(--accent-primary); /* Use primary accent */
+    margin-bottom: 5px;
+}
+
+.stock-name {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 12px; /* More space */
+}
+
+.stock-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.back-button,
+.submit-button,
+.delete-news-button {
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 10px 18px; /* Adjusted padding */
+    border-radius: 8px; /* Softer radius */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.back-button:hover,
+.submit-button:hover {
+    background-color: #2980b9; /* Darken primary accent on hover */
+    transform: scale(1.02);
+}
+
+.delete-news-button {
+    font-size: 10px;
+    padding: 8px 12px;
+    background-color: var(--color-danger); /* Use danger color */
+}
+
+.delete-news-button:hover {
+    background-color: #c0392b; /* Darken danger color on hover */
+}
+
+.news-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: var(--card-border-radius);
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background-color: var(--background-card);
+    border: 1px solid var(--border-color);
+}
+
+.news-content {
+    flex-grow: 1;
+}
+
+.news-timestamp {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.news-text {
+    white-space: pre-wrap;
+    background-color: var(--background-main); /* Slightly different from card for depth */
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+/* .delete-news-button specific to news item was defined above, ensure one definition */
+/* The one inside .news-item might be more specific for layout */
+.news-item .delete-news-button {
+    /* background-color: var(--accent-primary); */ /* Already set by general .delete-news-button */
+    /* color: white; */
+    /* border: none; */
+    /* padding: 8px 12px; */
+    /* border-radius: 5px; */
+    /* cursor: pointer; */
+    /* font-size: 10px; */
+    flex-shrink: 0;
+    margin-top: 0; /* Align with top of news content if desired, or adjust */
+    align-self: center; /* Vertically center with timestamp and text area */
+}
+
+/* .delete-news-button:hover { */
+    /* background-color: #e74c3c; */ /* Already set by general .delete-news-button:hover */
+/* } */
+
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .chart-container {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+    }
+
+    .stock-list {
+        /* grid-template-columns: 1fr; */ /* Already responsive due to auto-fill and minmax */
+    }
+
+    .header-title {
+        font-size: 24px;
+    }
+
+    .header-date {
+        font-size: 14px;
+    }
+}
+
+/* Style for MUI Tabs (if not using sx prop extensively) */
+/* .MuiTabs-root {} */
+/* .MuiTab-root {} */
+
+/* Removed old #date-tabs styles as MUI Tabs are usually styled via sx or theme overrides */
+/* #date-tabs .tab {
+    padding: 10px 15px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    color: #e0e0e0;
+}
+
+#date-tabs .tab--selected {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+    font-weight: bold;
+    color: #fff;
+} */
+
+.strategy-section {
+    margin-bottom: 2rem;
+}
+
+.strategy-section h3 {
+    margin-bottom: 0.5rem;
+    color: var(--accent-primary);
+}
+
+.strategy-section p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.s-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Increased minmax */
+    gap: 25px; /* Increased gap */
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.s-card {
+    background-color: var(--background-card);
+    color: var(--text-primary);
+    padding: 25px;
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.image-card {
+    grid-column: span 2;
+    grid-row: span 2;
+    display: flex; /* For centering image if needed */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* To respect border-radius of image */
+}
+
+@media screen and (max-width: 900px) { /* Adjusted breakpoint */
+    .image-card {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+}
+
+.s-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.s-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px; /* Slightly smaller radius than card */
+    object-fit: contain; /* Changed to contain to ensure full image is visible */
+    max-height: 400px; /* Max height for images in image-card */
+}
+
+.card-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.error-card {
+    background-color: var(--color-danger) !important; /* Use variable */
+    color: white !important;
+    font-weight: bold;
+    border: 1px solid darken(var(--color-danger), 10%) !important;
+}
+
+.custom-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.chart-header {
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.chart-card {
+    width: 100%;
+    /* .card styles will apply here */
+}
+
+.chart-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* Adjusted minmax */
+    gap: 20px; /* Standardized gap */
+    margin-top: 20px;
+    padding: 0; /* Removed padding, rely on parent or main-content */
+}
+
+@media (max-width: 1024px) {
+    .chart-list {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Responsive for smaller screens */
+    }
+}
+
+.sec-filing-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sec-filing-section {
+    background-color: var(--background-main); /* Use main bg for slight differentiation */
+    padding: 18px;
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.sec-filing-grid {
+    display: grid;
+    grid-template-columns: 150px 1fr; /* Adjusted label column width */
+    gap: 12px;
+    align-items: center;
+}
+
+.sec-filing-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.sec-filing-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.sec-filing-text {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.sec-filing-summary {
+    font-style: italic;
+    color: var(--accent-primary);
+    margin: 12px 0;
+    line-height: 1.5;
+    padding: 10px;
+    background-color: rgba(52, 152, 219, 0.1); /* Light background for summary */
+    border-left: 3px solid var(--accent-primary);
+    border-radius: 4px;
+}
+
+.price-chart-content {
+    position: relative;
+    height: 400px; /* Keep if this specific height is desired, or make flexible */
+}
+
+/* Remove individual card margins if parent has gap */
+.metrics-column > .card,
+.left-chart-stack-column > .card,
+.right-info-column > .card {
+    margin-bottom: 0;
+    /* height: auto; */ /* Already default, explicit height:100% is used in some contexts */
+}
