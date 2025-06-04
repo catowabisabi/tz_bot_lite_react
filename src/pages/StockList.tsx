@@ -49,6 +49,7 @@ type SortKey = keyof Pick<Stock, 'symbol' | 'name' | 'close_change_percentage' |
 const StockList: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [tabValue, setTabValue] = useState(0);
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -78,6 +79,26 @@ const StockList: React.FC = () => {
       fetchLatestDayStocks();
     }
   }, [location.search]);
+
+  useEffect(() => {
+    // Fetch available dates when component mounts
+    const fetchAvailableDates = async () => {
+      try {
+        const response = await fetch('https://fastapi.enomars.org/api/stocks/available_dates');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result.dates) {
+          setAvailableDates(result.dates);
+        }
+      } catch (err) {
+        console.error("Error fetching available dates:", err);
+      }
+    };
+
+    fetchAvailableDates();
+  }, []);
 
   const fetchLatestDayStocks = async () => {
     setLoading(true);
@@ -205,6 +226,11 @@ const StockList: React.FC = () => {
 
   const DatePickerComponent = isMobile ? MobileDatePicker : DesktopDatePicker;
 
+  const shouldDisableDate = (date: Dayjs) => {
+    const formattedDate = date.format('YYYY-MM-DD');
+    return !availableDates.includes(formattedDate);
+  };
+
   if (loading && stocks.length === 0) {
     return (
       <div className="main-content" style={{ textAlign: 'center', marginTop: '2rem' }}>
@@ -235,6 +261,7 @@ const StockList: React.FC = () => {
               label="Select Date"
               value={dateValue}
               onChange={handleDateChange}
+              shouldDisableDate={shouldDisableDate}
               slotProps={{
                 textField: { 
                   fullWidth: true,
@@ -272,6 +299,7 @@ const StockList: React.FC = () => {
                     label="Select Date"
                     value={dateValue}
                     onChange={handleDateChange}
+                    shouldDisableDate={shouldDisableDate}
                     slotProps={{
                       textField: { 
                         sx: { minWidth: '200px' }
